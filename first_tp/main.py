@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.express as px
 
 dataframe = pd.read_csv('./data/paris_airbnb.csv')
 
@@ -32,3 +33,28 @@ dataframe = dataframe[dataframe['price'] > 0]
 
 with open('./data/cleaned_paris_airbnb.csv', 'w') as cleaned_file:
     dataframe.to_csv(cleaned_file, index=False)
+
+
+dataframe = pd.read_csv('./data/cleaned_paris_airbnb.csv')
+
+scatter_plot = px.scatter(
+    data_frame=dataframe,
+    x='accommodates',
+    y='price',
+    color='room_type'
+)
+scatter_plot.write_html('./html/scatter_plot.html')
+
+histogram = px.histogram(
+    data_frame=dataframe,
+    x='price',
+    y='room_type'
+)
+histogram.write_html('./html/histogram.html')
+
+box_plot = px.box(
+    data_frame=dataframe,
+    x='price',
+    y='room_type'
+)
+box_plot.write_html('./html/box_plot.html')
