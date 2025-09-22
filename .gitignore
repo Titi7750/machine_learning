@@ -9,3 +9,6 @@ __pycache__/
 
 # CSV files cleaned
 cleaned_paris_airbnb.csv
+
+# HTML output
+html/
