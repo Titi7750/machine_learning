@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 
+# 1. Read and clean the data
 dataframe = pd.read_csv('./data/paris_airbnb.csv')
 
 print(f'Dataframe shape: {dataframe.shape}')
@@ -37,6 +38,7 @@ with open('./data/cleaned_paris_airbnb.csv', 'w') as cleaned_file:
 
 dataframe = pd.read_csv('./data/cleaned_paris_airbnb.csv')
 
+# 2. Generate and save figures with plotly
 scatter_plot = px.scatter(
     data_frame=dataframe,
     x='accommodates',
