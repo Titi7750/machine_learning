@@ -4,9 +4,10 @@ import plotly.express as px
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 # Create output directory if it doesn't exist
 if not os.path.exists('./html'):
@@ -104,3 +105,12 @@ preprocessor = ColumnTransformer(
 knn = KNeighborsClassifier(n_neighbors=5)
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ('model', knn)])
 pipe.fit(X_train, y_train)
+
+# 4. KNN Regression & Evaluation
+prediction = pipe.predict(X_test)
+
+mae = mean_absolute_error(y_test, prediction)
+rmse = mean_squared_error(y_test, prediction)
+
+print(f'Mean Absolute Error (MAE): {round(mae, 2)}€')
+print(f'Root Mean Squared Error (RMSE): {round(rmse, 2)}€')
