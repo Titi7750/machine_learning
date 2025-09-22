@@ -1,10 +1,11 @@
 import os
+import numpy as np
 import pandas as pd
 import plotly.express as px
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error
@@ -76,7 +77,6 @@ box_plot.write_html('./html/box_plot.html')
 # 3. Split / Standardize / Pipeline
 y = dataframe['price']
 X = dataframe.drop(columns=['price'])
-
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
@@ -93,7 +93,6 @@ categorical_pipeline = Pipeline(steps=[
 
 nums_cols = X.select_dtypes(include=['int64', 'float64']).columns
 cat_cols = X.select_dtypes(include=['object']).columns
-
 preprocessor = ColumnTransformer(
     transformers=[
         ('num', numeric_pipeline, nums_cols),
@@ -103,7 +102,12 @@ preprocessor = ColumnTransformer(
 )
 
 knn = KNeighborsClassifier(n_neighbors=5)
-pipe = Pipeline(steps=[('preprocessor', preprocessor), ('model', knn)])
+pipe = Pipeline(
+    steps=[
+        ('preprocessor', preprocessor),
+        ('model', knn)
+    ]
+)
 pipe.fit(X_train, y_train)
 
 # 4. KNN Regression & Evaluation
@@ -114,3 +118,29 @@ rmse = mean_squared_error(y_test, prediction)
 
 print(f'Mean Absolute Error (MAE): {round(mae, 2)}€')
 print(f'Root Mean Squared Error (RMSE): {round(rmse, 2)}€')
+
+# 5. K choice & MAE curve
+rmse_scores = []
+
+for k in range(1, 31):
+    knn = KNeighborsRegressor(n_neighbors=k)
+    pipe = Pipeline(
+        steps=[
+            ('preprocessor', preprocessor),
+            ('model', knn)
+        ]
+    )
+    pipe.fit(X_train, y_train)
+    
+    rmse = np.sqrt(mean_squared_error(y_test, pipe.predict(X_test)))
+    rmse_scores.append(rmse)
+
+for rmse_score in rmse_scores:
+    line_plot = px.line(
+        x=list(range(1, 31)),
+        y=rmse_scores,
+        labels={'x': 'K', 'y': 'RMSE'},
+        title='K choice & RMSE curve'
+    )
+
+    line_plot.write_html('./html/fig_rmse_vs_k.html')
