@@ -39,4 +39,4 @@ pipe.fit(x, y)
 new_fruit = np.array([[130, 1]])
 prediction = pipe.predict(new_fruit)
 
-print(prediction[0])
+print(f'Fruit prédit : {prediction[0]}')
