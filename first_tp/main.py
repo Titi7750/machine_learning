@@ -5,10 +5,10 @@ import plotly.express as px
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 
 # Create output directory if it doesn't exist
 if not os.path.exists('./html'):
@@ -49,11 +49,11 @@ with open('./data/cleaned_paris_airbnb.csv', 'w') as cleaned_file:
     dataframe.to_csv(cleaned_file, index=False)
 
 
-dataframe = pd.read_csv('./data/cleaned_paris_airbnb.csv')
+cleaned_dataframe = pd.read_csv('./data/cleaned_paris_airbnb.csv')
 
 # 2. Generate and save figures with plotly
 scatter_plot = px.scatter(
-    data_frame=dataframe,
+    data_frame=cleaned_dataframe,
     x='accommodates',
     y='price',
     color='room_type'
@@ -61,22 +61,22 @@ scatter_plot = px.scatter(
 scatter_plot.write_html('./html/scatter_plot.html')
 
 histogram = px.histogram(
-    data_frame=dataframe,
+    data_frame=cleaned_dataframe,
     x='price',
     y='room_type'
 )
 histogram.write_html('./html/histogram.html')
 
 box_plot = px.box(
-    data_frame=dataframe,
+    data_frame=cleaned_dataframe,
     x='price',
     y='room_type'
 )
 box_plot.write_html('./html/box_plot.html')
 
 # 3. Split / Standardize / Pipeline
-y = dataframe['price']
-X = dataframe.drop(columns=['price'])
+y = cleaned_dataframe['price']
+X = cleaned_dataframe.drop(columns=['price'])
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
